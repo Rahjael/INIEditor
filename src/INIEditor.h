@@ -34,9 +34,9 @@ public:
 
   // Public APIs WITH side effects
   void clearAll();
-  void deleteLine(unsigned int); // TODO implement
-  void parseWorkingFile(); // Parses both into lines and sectionsKeyValues
+  void deleteLine(unsigned int);
   void parseMapFromLines();
+  void parseWorkingFile(); // Parses both into lines and sectionsKeyValues
   void replaceEntireLine(int, std::string);
   void replaceLineByKeyValuePair(int, std::pair<std::string, std::string>);
   void setExpectedExit();
