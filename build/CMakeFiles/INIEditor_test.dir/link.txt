@@ -1,0 +1,2 @@
+/usr/bin/ar qc libINIEditor_test.a  CMakeFiles/INIEditor_test.dir/src/main.cpp.o CMakeFiles/INIEditor_test.dir/src/INIEditor.cpp.o CMakeFiles/INIEditor_test.dir/src/UI.cpp.o
+/usr/bin/ranlib libINIEditor_test.a

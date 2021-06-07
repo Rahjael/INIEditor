@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/INIEditorTests.dir/INIEditorTests.cpp.o  -o INIEditorTests  ../lib/libgtest_maind.a ../libINIEditor_test.a ../lib/libgtestd.a -lpthread 

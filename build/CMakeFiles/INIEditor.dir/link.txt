@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/INIEditor.dir/src/main.cpp.o CMakeFiles/INIEditor.dir/src/INIEditor.cpp.o CMakeFiles/INIEditor.dir/src/UI.cpp.o  -o INIEditor 

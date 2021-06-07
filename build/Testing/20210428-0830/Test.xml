@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20210428-0830-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.16.3"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="rahjael-dev"
+	OSRelease="5.8.0-50-generic"
+	OSVersion="#56~20.04.1-Ubuntu SMP Mon Apr 12 21:46:35 UTC 2021"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="158"
+	ProcessorCacheSize="8192"
+	NumberOfLogicalCPU="4"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="2047"
+	TotalPhysicalMemory="7902"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="4000"
+	>
+	<Testing>
+		<StartDateTime>Apr 28 19:19 CEST</StartDateTime>
+		<StartTestTime>1619630367</StartTestTime>
+		<TestList>
+			<Test>./test/INIEditorTests</Test>
+		</TestList>
+		<Test Status="passed">
+			<Name>INIEditorTests</Name>
+			<Path>./test</Path>
+			<FullName>./test/INIEditorTests</FullName>
+			<FullCommandLine>/home/rahjael/Coding/INIEditor_test/build/test/INIEditorTests</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.00193332</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/home/rahjael/Coding/INIEditor_test/build/test/INIEditorTests</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">eJyNk1FPwjAQx9/3KS4+wQMbEPXBxAdi1CwYNAQkhJClbMdW7dqla0G+ve0miyOb8152bX/3v+uuN9ecUx5DSijv9WEvRQpeIlL0JEk+CDLvQUQG8PyZ/xhRJWSgMFdeLETM8NLNZejF1gusnhuGzua+si3Mf5LdgmXyMtu4WECuqfm6zmZQ2RaemdgRVgLID1QKniI3MKqBzi7gUckVosuF/+Iv1s4G5ssZFLY9b7qrBCVOUt9ZCw1EItj1HVz95947TVnkWffKiJf2Om0Qh94Q0rzfWWLJgRKKsL5Tx29+/6eqkPqlqm13TxkGGZG5KbteWzNTVdgsd0xsQzISYiAxFQfCgkhLE9eVozOwI7Fp7krITwM+mWrbstSpDsmQIZETxtrEzucdMjGqKZ7eCdP4RqhsU7vAGl9Cc2v/egxts6BM6YNIHHl91tpnDCTh7jmT67rOIkGQ9lzsQRm/YIVWmVZwJIa3XcQITO9CBGrSf4WIUV7CiQlNBIts9Gg4vobdqRjkb3KuXbQ=</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<EndDateTime>Apr 28 19:19 CEST</EndDateTime>
+		<EndTestTime>1619630367</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
