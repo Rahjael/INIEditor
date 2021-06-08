@@ -198,22 +198,26 @@ void UI::lineMenu(unsigned int num) const {
   do{
     std::cout << std::endl << std::endl;
     std::cout << "What do you want to do with this line?" << std::endl;
-    std::cout << "1. Edit line" << std::endl;
-    std::cout << "2. Delete line" << std::endl;
+    std::cout << "1. Insert line" << std::endl;
+    std::cout << "2. Edit line" << std::endl;
+    std::cout << "3. Delete line" << std::endl;
 
     choice = this->inputNum();
 
     switch(choice) {
       case 1:
-        this->editLine(num);
-        break;
+        this->insertLine(num);
+        return;
       case 2:
+        this->editLine(num);
+        return;
+      case 3:
         this->deleteLine(num);
         return;
       default:
       std::cout << "\n\nPlease choose either 1 or 2." << std::endl;
     }
-  } while(choice != 1 && choice != 2);
+  } while(choice < 1 || choice > 3);
 }
 
 void UI::deleteLine(unsigned int num) const {
@@ -257,5 +261,14 @@ void UI::editLine(unsigned int num) const {
 
   this->editor->writeLinesToFile();
   std::cout << "Line edited. Lines saved to file." << std::endl;
+}
+
+void UI::insertLine(unsigned int index) const {
+  std::string newLine;
+  std::cout << "Line " << index << "will be shifted down. Type a new line to insert: ";
+  std::getline(std::cin >> std::ws, newLine);
+  this->editor->insertLine(index, newLine);
+  this->editor->writeLinesToFile();
+  std::cout << "Line \"" << newLine << "\" has been added at index " << index << std::endl;
 }
 

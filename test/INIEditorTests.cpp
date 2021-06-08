@@ -133,7 +133,7 @@ TEST(INIEditor, deleteLine) {
   EXPECT_FALSE(lineToDelete == editor.getLines()[indexToDelete]);
 }
 
-TEST(INIEditor, addLine) {
+TEST(INIEditor, insertLine) {
   auto prevNumLines = editor.getNumberOfLines();
   auto addAtIndex = 15;
   auto lineToAdd = "testKey=testValue";

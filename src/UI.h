@@ -38,6 +38,7 @@ private:
   void lineMenu(unsigned int) const;
   void deleteLine(unsigned int) const;
   void editLine(unsigned int) const;
+  void insertLine(unsigned int) const;
 
 
 };
