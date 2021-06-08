@@ -33,7 +33,8 @@ public:
   const mapKeyValues * getPtrToKeyValuesMap() const;
 
   // Public APIs WITH side effects
-  void clearAll();
+  void addLine(unsigned int, std::string); // Add line at specified index
+  void clearAll(); // Clears attributes: workingFile, lines, sectionsKeyValues
   void deleteLine(unsigned int);
   void parseMapFromLines();
   void parseWorkingFile(); // Parses both into lines and sectionsKeyValues

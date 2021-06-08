@@ -77,6 +77,11 @@ const mapKeyValues * INIEditor::getPtrToKeyValuesMap() const {
   return &(*(this->sectionsKeyValues));
 }
 
+void INIEditor::addLine(unsigned int index, std::string newLine) {
+  this->lines.insert(this->lines.begin() + index, newLine);
+  this->parseMapFromLines();
+}
+
 std::pair<std::string, std::string> INIEditor::getKeyValuePair(std::string line) const {
   char delimiter = '=';
   std::pair<std::string, std::string> keyValue;
@@ -102,7 +107,7 @@ mapKeyValues * INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> l
 
     // Detect section
     if(lines[i][0] == beginSectionChar) {
-      // In Javascript, this would be a single line. But this is C++, so:
+      // In Javascript, this would be a single line. But this is C++ (and also I'm bad) so:
       std::string tempLine = lines[i]; // Copy string to avoid messing up
       tempLine.erase(0, 1); // Erase first char (presumably '[')
       std::istringstream tempStream(tempLine); // Cast string into stringstream to allow use of std::getline()
@@ -161,6 +166,7 @@ void INIEditor::clearAll() {
 
 void INIEditor::deleteLine(unsigned int index) {
   this->lines.erase(this->lines.begin()+index);
+  this->parseMapFromLines();
 }
 
 void INIEditor::saveCurrentLines(std::string filename) {
