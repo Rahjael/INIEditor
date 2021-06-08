@@ -133,6 +133,19 @@ TEST(INIEditor, deleteLine) {
   EXPECT_FALSE(lineToDelete == editor.getLines()[indexToDelete]);
 }
 
+TEST(INIEditor, addLine) {
+  auto prevNumLines = editor.getNumberOfLines();
+  auto addAtIndex = 15;
+  auto lineToAdd = "testKey=testValue";
+  auto shiftedLine = editor.getLines()[addAtIndex];
+  
+  editor.addLine(addAtIndex, lineToAdd);
+
+  EXPECT_EQ(prevNumLines + 1, editor.getNumberOfLines());
+  EXPECT_EQ(shiftedLine, editor.getLines()[addAtIndex + 1]);
+  EXPECT_EQ(editor.getLines()[addAtIndex], lineToAdd);
+}
+
 TEST(INIEditor, writeFile) {
   auto pair = editor.getKeyValuePair(1);
   pair.second = "ITALIAN";
