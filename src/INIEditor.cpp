@@ -77,7 +77,7 @@ const mapKeyValues * INIEditor::getPtrToKeyValuesMap() const {
   return &(*(this->sectionsKeyValues));
 }
 
-void INIEditor::addLine(unsigned int index, std::string newLine) {
+void INIEditor::insertLine(unsigned int index, std::string newLine) {
   this->lines.insert(this->lines.begin() + index, newLine);
   this->parseMapFromLines();
 }

@@ -139,7 +139,7 @@ TEST(INIEditor, addLine) {
   auto lineToAdd = "testKey=testValue";
   auto shiftedLine = editor.getLines()[addAtIndex];
   
-  editor.addLine(addAtIndex, lineToAdd);
+  editor.insertLine(addAtIndex, lineToAdd);
 
   EXPECT_EQ(prevNumLines + 1, editor.getNumberOfLines());
   EXPECT_EQ(shiftedLine, editor.getLines()[addAtIndex + 1]);
