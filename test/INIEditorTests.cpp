@@ -20,7 +20,7 @@ namespace Testing {
 }
 
 // Testing setup
-// XXX the following files must be present in PROJECT_DIR/build/test:
+// XXX the following files MUST be present in PROJECT_DIR/build/test:
 // - Skyrim_short.INI
 // - Skyrim_short_spaces.INI
 
@@ -121,6 +121,17 @@ TEST(INIEditor, replaceEntireLine) {
   EXPECT_EQ(keyValuesMap[section][key], value);
 }
 
+// This feels a bit unnecessary, but you never know
+TEST(INIEditor, deleteLine) {
+  auto prevNumLines = editor.getNumberOfLines();
+  auto indexToDelete = 15;
+  auto lineToDelete = editor.getLines()[indexToDelete];
+  
+  editor.deleteLine(indexToDelete);
+
+  EXPECT_FALSE(prevNumLines == editor.getNumberOfLines());
+  EXPECT_FALSE(lineToDelete == editor.getLines()[indexToDelete]);
+}
 
 TEST(INIEditor, writeFile) {
   auto pair = editor.getKeyValuePair(1);
@@ -138,5 +149,3 @@ TEST(INIEditor, writeFile) {
   EXPECT_EQ(newMap["General"][pair.first], pair.second);  
 }
 
-
-// TODO test deleteLine??? Feels unnecessary

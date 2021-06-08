@@ -59,6 +59,11 @@ UI::UI(INIEditor * editor)
   this->mainMenu();
 }
 
+
+//
+// INTERNAL HELPER FUNCTIONS
+//
+
 void UI::clearCin() const {
   // These two lines are necessary to flush away any non integer chars the user
   // might input, otherwise we get stuck in a loop.
@@ -86,12 +91,17 @@ bool UI::confirmInputPrompt() const {
   do {
     std::cout << "Confirm? (y/n)" << std::endl;
     std::cin >> choice;
+    this->clearCin();
   } while(choice != 'y' && choice != 'n');
   
   return choice == 'y' ? true : false;
 }
 
 
+
+//
+// MENUS
+//
 
 void UI::mainMenu() const {
   unsigned int choice;
