@@ -7,6 +7,7 @@
 #include <climits>
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <regex>
 #include <string>
 
@@ -17,7 +18,7 @@ public:
   UI(INIEditor *);
 
 private:
-  INIEditor * editor;
+  std::unique_ptr<INIEditor> editor;
 
   // Utilities
   void clearCin() const;

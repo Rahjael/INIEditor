@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <new>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -30,13 +31,12 @@ public:
   void listSections() const;  // TODO this doesn't really belong here, move to UI class?
   std::string getCurrentFilename() const;
   std::pair<std::string, std::string> getKeyValuePair(unsigned int) const; // Overloaded in private utilities
-  const mapKeyValues * getPtrToKeyValuesMap() const;
+  const std::shared_ptr<mapKeyValues> getPtrToKeyValuesMap() const;
 
   // Public APIs WITH side effects
   void insertLine(unsigned int, std::string); // Insert line at specified index
   void clearAll(); // Clears attributes: workingFile, lines, sectionsKeyValues
   void deleteLine(unsigned int);
-  void parseMapFromLines();
   void parseWorkingFile(); // Parses both into lines and sectionsKeyValues
   void replaceEntireLine(int, std::string);
   void replaceLineByKeyValuePair(int, std::pair<std::string, std::string>);
@@ -48,11 +48,13 @@ public:
 private:
   // Internal attributes
   std::vector<std::string> lines;
-  mapKeyValues * sectionsKeyValues; // Yes, destructor cleans this up
+  //mapKeyValues * sectionsKeyValues; // Yes, destructor cleans this up // TODO old raw pointer to delete
+  std::shared_ptr<mapKeyValues> sectionsKeyValues;
   std::string workingFile;
   bool isUnexpectedExit;
 
   // Internal helper functions WITH side effects
+  void parseMapFromLines();
   void replaceLine(int, std::string&);
   void saveCurrentLines(std::string);
 
@@ -61,7 +63,8 @@ private:
   std::pair<std::string, std::string> getKeyValuePair(std::string) const; // Overloaded in public APIs
 
   // TODO ? I don't really like the following pointer return... but the alternative is to overload operator= for that monster map
-  mapKeyValues * getSectionsKeyValuePairsMap(std::vector<std::string>) const;
+  //mapKeyValues * getSectionsKeyValuePairsMap(std::vector<std::string>) const; // TODO old raw pointer to delete
+  std::shared_ptr<mapKeyValues> getSectionsKeyValuePairsMap(std::vector<std::string>) const;
 
 };
 

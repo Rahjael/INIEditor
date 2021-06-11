@@ -27,7 +27,8 @@ std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::stri
 }
 
 INIEditor::~INIEditor() {
-  delete this->sectionsKeyValues;
+  //delete this->sectionsKeyValues; // TODO commented out while testing smart pointers
+
   if(this->isUnexpectedExit && this->workingFile != "") {
     std::cout << "Autosaving because of unexpected exit..." << std::endl;
     std::string filename = "autosave.ini";
@@ -73,8 +74,8 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(unsigned int inde
   return keyValue;
 }
 
-const mapKeyValues * INIEditor::getPtrToKeyValuesMap() const {
-  return &(*(this->sectionsKeyValues));
+const std::shared_ptr<mapKeyValues> INIEditor::getPtrToKeyValuesMap() const {
+  return this->sectionsKeyValues;
 }
 
 void INIEditor::insertLine(unsigned int index, std::string newLine) {
@@ -91,8 +92,10 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(std::string line)
   return keyValue;
 }
 
-mapKeyValues * INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> lines) const {
-  mapKeyValues * sectionsKeyValuesMap = new mapKeyValues();
+std::shared_ptr<mapKeyValues> INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> lines) const {
+
+  // Reminder: using mapKeyValues = std::map<std::string, std::map<std::string, std::string>>;
+  std::shared_ptr<mapKeyValues> sectionsKeyValuesMap(new mapKeyValues);
   // Char and string literals
   char commentChar = ';';
   char beginSectionChar = '[';
@@ -137,8 +140,8 @@ void INIEditor::parseWorkingFile() {
 }
 
 void INIEditor::parseMapFromLines() {
-  delete this->sectionsKeyValues;
-  this->sectionsKeyValues = this->getSectionsKeyValuePairsMap(this->lines);  
+  // delete this->sectionsKeyValues; // TODO commented while testing smart pointers
+  this->sectionsKeyValues = this->getSectionsKeyValuePairsMap(this->lines);
 }
 
 void INIEditor::replaceEntireLine(int index, std::string value) {
