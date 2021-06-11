@@ -18,8 +18,3 @@
 __std::map<std::string, std::map<std::string, std::string>>__ ("map of section names each containing a map of keys each having a value")
 this map is currently not used, but it's there in case it turns out to be useful in the future.
 
-
-**TODOs:**
-
-- there are a couple raw pointers here and there and this may bring shame to me and my family.
-- add more appropriate input checks in the CLI (although these concern the UI more than the actual class of the exercise, so I don't know if they will be required)
