@@ -53,7 +53,7 @@
 #endif
 
 
-UI::UI(INIEditor * editor)
+UI::UI(INIEditor& editor)
   : editor{editor}
 {
   this->mainMenu();
@@ -120,7 +120,7 @@ void UI::mainMenu() const {
         break;
       case 2:
         std::cout << "Exiting program..." << std::endl;
-        editor->setExpectedExit();
+        editor.setExpectedExit();
         return;
       default:
       std::cout << "\n\nPlease use numbers to navigate the menu." << std::endl;
@@ -156,21 +156,21 @@ void UI::loadFile() const {
 
   std::cout << files[choice - 1] << " selected" << std::endl;
 
-  this->editor->setWorkingFile(files[choice - 1]);
-  std::cout << "\n\n Working file set: " << this->editor->getCurrentFilename() << std::endl;
+  this->editor.setWorkingFile(files[choice - 1]);
+  std::cout << "\n\n Working file set: " << this->editor.getCurrentFilename() << std::endl;
 
   this->workWithFile();
 }
 
 void UI::workWithFile() const {
-  std::cout << "\n\nWorking with file: " << editor->getCurrentFilename() << std::endl;
+  std::cout << "\n\nWorking with file: " << editor.getCurrentFilename() << std::endl;
 
   std::cout << "Loading lines... ";
-  this->editor->parseWorkingFile();
+  this->editor.parseWorkingFile();
   std::cout << "done." << std::endl;
   std::cout << "\nListing file lines:" << std::endl;
 
-  auto lines = editor->getLines();
+  auto lines = editor.getLines();
 
   for(int i = 0; i < lines.size(); i++) {
     std::cout << i << ". " << lines[i] << std::endl;
@@ -184,7 +184,7 @@ void UI::workWithFile() const {
   do {
     keepAsking = false;
     choice = this->inputNum();
-    if(choice >= this->editor->getNumberOfLines()) {
+    if(choice >= this->editor.getNumberOfLines()) {
       std::cout << "Invalid index. Please insert another number." << std::endl;
       keepAsking = true;
     }
@@ -226,8 +226,8 @@ void UI::deleteLine(unsigned int num) const {
 
   choice = this->confirmInputPrompt();
   if(choice) {
-    this->editor->deleteLine(num);
-    this->editor->writeLinesToFile();
+    this->editor.deleteLine(num);
+    this->editor.writeLinesToFile();
     std::cout << "Line deleted." << std::endl;
   }
   else {
@@ -236,7 +236,7 @@ void UI::deleteLine(unsigned int num) const {
 }
 
 void UI::editLine(unsigned int num) const {
-  std::string line = this->editor->getLines()[num];
+  std::string line = this->editor.getLines()[num];
   std::cout << "Line " << num << " contains: " << line << std::endl;
 
   if(line.at(0) == '[') {
@@ -244,22 +244,22 @@ void UI::editLine(unsigned int num) const {
     std::string newString = '[' + this->inputName() + ']';
 
     if(this->confirmInputPrompt()) {
-      this->editor->replaceEntireLine(num, newString);
+      this->editor.replaceEntireLine(num, newString);
     }
   }
   else {
-    std::pair<std::string, std::string> keyValue = this->editor->getKeyValuePair(num);
+    std::pair<std::string, std::string> keyValue = this->editor.getKeyValuePair(num);
     std::cout << "Selected line is a key/value pair. Select new value for key: " << keyValue.first << std::endl;
     std::cout << "Current value: " << keyValue.second << std::endl;
     std::string newValue = this->inputName();
     std::string newString = keyValue.first + '=' + newValue;
 
     if(this->confirmInputPrompt()) {
-      this->editor->replaceEntireLine(num, newString);
+      this->editor.replaceEntireLine(num, newString);
     }
   }
 
-  this->editor->writeLinesToFile();
+  this->editor.writeLinesToFile();
   std::cout << "Line edited. Lines saved to file." << std::endl;
 }
 
@@ -267,8 +267,8 @@ void UI::insertLine(unsigned int index) const {
   std::string newLine;
   std::cout << "Line " << index << "will be shifted down. Type a new line to insert: ";
   std::getline(std::cin >> std::ws, newLine);
-  this->editor->insertLine(index, newLine);
-  this->editor->writeLinesToFile();
+  this->editor.insertLine(index, newLine);
+  this->editor.writeLinesToFile();
   std::cout << "Line \"" << newLine << "\" has been added at index " << index << std::endl;
 }
 

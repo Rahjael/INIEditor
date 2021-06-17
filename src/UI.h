@@ -15,10 +15,10 @@
 
 class UI {
 public:
-  UI(INIEditor *);
+  UI(INIEditor&);
 
 private:
-  std::unique_ptr<INIEditor> editor;
+  INIEditor& editor;
 
   // Utilities
   void clearCin() const;

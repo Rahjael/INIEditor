@@ -6,6 +6,6 @@
 int main() {
 
   INIEditor editor;
-  UI ui(&editor);
+  UI ui(editor);
 
 }
