@@ -104,14 +104,14 @@ TEST(INIEditor, getKeyValuePair) {
 }
 
 TEST(INIEditor, getPtrToSectionsKeyValues) {
-  auto keyValuesMap = *editor.getPtrToKeyValuesMap();
+  auto keyValuesMap = editor.getKeyValuesMap();
   std::string sectionName = "Audio";
   
   EXPECT_EQ(keyValuesMap[sectionName]["fMusicDuckingSeconds"], "6.0");
 }
 
 TEST(INIEditor, replaceEntireLine) {
-  auto keyValuesMap = *editor.getPtrToKeyValuesMap();
+  auto keyValuesMap = editor.getKeyValuesMap();
   std::string section = "Grass";
   std::string key = "bAllowCreateGrass";
   std::string value = "1";
@@ -136,7 +136,7 @@ TEST(INIEditor, deleteLine) {
 TEST(INIEditor, insertLine) {
   auto prevNumLines = editor.getNumberOfLines();
   auto addAtIndex = 15;
-  auto lineToAdd = "testKey=testValue";
+  auto lineToAdd = std::string("testKey=testValue");
   auto shiftedLine = editor.getLines()[addAtIndex];
   
   editor.insertLine(addAtIndex, lineToAdd);
@@ -149,7 +149,8 @@ TEST(INIEditor, insertLine) {
 TEST(INIEditor, writeFile) {
   auto pair = editor.getKeyValuePair(1);
   pair.second = "ITALIAN";
-  editor.replaceEntireLine(1, std::string(pair.first) + "=" + pair.second);
+  auto newString = std::string(pair.first) + "=" + pair.second;
+  editor.replaceEntireLine(1, newString);
   editor.setWorkingFile(Testing::writeTestFile);
   editor.writeLinesToFile();
 
@@ -157,7 +158,7 @@ TEST(INIEditor, writeFile) {
   newEditor.setWorkingFile(Testing::writeTestFile);
   newEditor.setExpectedExit();
   newEditor.parseWorkingFile();
-  auto newMap = *newEditor.getPtrToKeyValuesMap();
+  auto newMap = newEditor.getKeyValuesMap();
 
   EXPECT_EQ(newMap["General"][pair.first], pair.second);  
 }
