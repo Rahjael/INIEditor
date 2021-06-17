@@ -52,7 +52,7 @@ unsigned int INIEditor::getNumberOfLines() const {
 
 void INIEditor::listSections() const {
   std::cout << "\nPrinting mapped sections and key/value pairs:" << std::endl;
-  for(auto& it : *(this->sectionsKeyValues)) {
+  for(auto& it : this->sectionsKeyValues) {
     std::cout << "Section: " << it.first << std::endl;
     for(auto& jt : it.second) {
       std::cout << "\t" << jt.first << " = " << jt.second << std::endl;
@@ -61,7 +61,7 @@ void INIEditor::listSections() const {
   std::cout << "End." << std::endl;
 }
 
-void INIEditor::setWorkingFile(std::string filename) {
+void INIEditor::setWorkingFile(std::string& filename) {
   this->workingFile = filename;
 }
 
@@ -74,16 +74,16 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(unsigned int inde
   return keyValue;
 }
 
-const std::shared_ptr<mapKeyValues> INIEditor::getPtrToKeyValuesMap() const {
-  return this->sectionsKeyValues;
-}
+// const mapKeyValues * INIEditor::getPtrToKeyValuesMap() const {
+//   return this->sectionsKeyValues;
+// }
 
-void INIEditor::insertLine(unsigned int index, std::string newLine) {
+void INIEditor::insertLine(unsigned int index, std::string& newLine) {
   this->lines.insert(this->lines.begin() + index, newLine);
   this->parseMapFromLines();
 }
 
-std::pair<std::string, std::string> INIEditor::getKeyValuePair(std::string line) const {
+std::pair<std::string, std::string> INIEditor::getKeyValuePair(const std::string& line) const {
   char delimiter = '=';
   std::pair<std::string, std::string> keyValue;
   std::istringstream sstream(line);
@@ -92,10 +92,10 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(std::string line)
   return keyValue;
 }
 
-std::shared_ptr<mapKeyValues> INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> lines) const {
+mapKeyValues INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> lines) const {
 
   // Reminder: using mapKeyValues = std::map<std::string, std::map<std::string, std::string>>;
-  std::shared_ptr<mapKeyValues> sectionsKeyValuesMap(new mapKeyValues);
+  mapKeyValues sectionsKeyValuesMap;
   // Char and string literals
   char commentChar = ';';
   char beginSectionChar = '[';
@@ -117,7 +117,7 @@ std::shared_ptr<mapKeyValues> INIEditor::getSectionsKeyValuePairsMap(std::vector
       std::getline(tempStream, tempLine, endSectionChar); // Parse text before token ( ']' )
       currentSection = tempLine; // Assign new section name
       std::map<std::string, std::string> emptyMap;
-      sectionsKeyValuesMap->insert({currentSection, emptyMap}); // Insert new section with empty vector of keyValue pairs
+      sectionsKeyValuesMap.insert({currentSection, emptyMap}); // Insert new section with empty vector of keyValue pairs
       continue;
     }
 
@@ -127,7 +127,7 @@ std::shared_ptr<mapKeyValues> INIEditor::getSectionsKeyValuePairsMap(std::vector
       std::istringstream tempStream(tempLine);
       std::getline(tempStream, keyValuePair.first, equalChar);
       std::getline(tempStream, keyValuePair.second, equalChar);
-      (*sectionsKeyValuesMap)[currentSection].insert(keyValuePair);
+      sectionsKeyValuesMap[currentSection].insert(keyValuePair);
     }
   }
 
@@ -144,17 +144,19 @@ void INIEditor::parseMapFromLines() {
   this->sectionsKeyValues = this->getSectionsKeyValuePairsMap(this->lines);
 }
 
-void INIEditor::replaceEntireLine(int index, std::string value) {
+void INIEditor::replaceEntireLine(int index, std::string& value) {
   this->lines[index] = value;
   this->parseMapFromLines();
 }
 
 void INIEditor::replaceLineByKeyValuePair(int index, std::pair<std::string, std::string> keyValue) {
-  this->replaceEntireLine(index, std::string(keyValue.first + "=" + keyValue.second));
+  auto newString = std::string(keyValue.first + "=" + keyValue.second);
+  this->replaceEntireLine(index, newString);
 }
 
 void INIEditor::writeLinesToFile() {
-  this->saveCurrentLines(this->getCurrentFilename());
+  auto fileName = this->getCurrentFilename();
+  this->saveCurrentLines(fileName);
 }
 
 void INIEditor::setExpectedExit() {
@@ -164,7 +166,7 @@ void INIEditor::setExpectedExit() {
 void INIEditor::clearAll() {
   this->workingFile = "";
   this->lines.clear();
-  this->sectionsKeyValues->clear();
+  this->sectionsKeyValues.clear();
 }
 
 void INIEditor::deleteLine(unsigned int index) {
@@ -172,7 +174,7 @@ void INIEditor::deleteLine(unsigned int index) {
   this->parseMapFromLines();
 }
 
-void INIEditor::saveCurrentLines(std::string filename) {
+void INIEditor::saveCurrentLines(std::string& filename) {
   std::ofstream file;
   file.open(filename);
   for(auto& line : this->lines) {
