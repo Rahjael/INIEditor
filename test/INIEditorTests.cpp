@@ -17,6 +17,7 @@ namespace Testing {
   std::string TEST_PATH = "../../test/";
   std::string defaultFile = TEST_PATH + "Skyrim_short.INI";
   std::string writeTestFile = TEST_PATH + "writeTest.INI";
+  std::string invalidName = "blah";
 }
 
 // Testing setup
@@ -162,4 +163,146 @@ TEST(INIEditor, writeFile) {
 
   EXPECT_EQ(newMap["General"][pair.first], pair.second);  
 }
+
+TEST(INIEditor, getSection) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string sectionName = "Display";
+  auto map = editor.getSection(sectionName);
+
+  EXPECT_EQ(map.at("fShadowLODMaxStartFade"), "1000.0");
+  EXPECT_EQ(map.at("fSpecularLODMaxStartFade"), "2000.0");
+}
+
+TEST(INIEditor, deleteSection) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  unsigned int beforeNum = editor.getNumberOfLines();
+  std::string sectionName = "Display";
+
+  bool result = editor.deleteSection(sectionName);
+
+  EXPECT_TRUE(result);
+  EXPECT_FALSE(editor.deleteSection(Testing::invalidName));
+}
+
+TEST(INIEditor, addSection) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  unsigned int beforeNum = editor.getNumberOfLines();
+
+  std::string sectionName = "NewName";
+  auto result = editor.addSection(sectionName);
+  auto afterNum = editor.getNumberOfLines();
+
+  EXPECT_EQ(beforeNum, 25);
+  EXPECT_EQ(afterNum, 28); // NOTE: adding 1 line actually adds 3 because empty lines are added at the end of each section
+  EXPECT_TRUE(result);
+}
+
+
+TEST(INIEditor, addPairToSection) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string key = "newKey";
+  std::string value = "newValue";
+  std::string section = "newSection";
+
+  editor.addSection(section);
+  editor.addPairToSection(section, key, value);
+
+  auto map = editor.getSection(section);
+
+  EXPECT_EQ(map[key], value);
+  // adding pair to non-existent section
+  EXPECT_ANY_THROW(editor.addPairToSection(Testing::invalidName, key, value));
+  // trying to add an already existing key
+  EXPECT_FALSE(editor.addPairToSection(section, key, value));
+}
+
+TEST(INIEditor, getValueBySectionAndKey) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string key = "newKey";
+  std::string value = "newValue";
+  std::string section = "newSection";
+
+  editor.addSection(section);
+  editor.addPairToSection(section, key, value);
+
+  auto newValue = editor.getValueBySectionAndKey(section, key);
+
+  EXPECT_EQ(newValue, value);
+
+
+  EXPECT_ANY_THROW(editor.getValueBySectionAndKey(Testing::invalidName, Testing::invalidName));
+}
+
+
+
+TEST(INIEditor, renameSection) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string toRename = "Display";
+  std::string newName = "newName";
+  std::string oldKey = "fShadowLODMaxStartFade";
+  std::string oldValue = "1000.0";
+
+  EXPECT_EQ(oldValue, editor.getValueBySectionAndKey(toRename, oldKey));
+
+  editor.renameSection(toRename, newName);
+
+  auto newValue = editor.getValueBySectionAndKey(newName, oldKey);
+
+  EXPECT_EQ(newValue, oldValue);
+
+  auto result = editor.renameSection(Testing::invalidName, Testing::invalidName);
+  EXPECT_FALSE(result);
+}
+
+
+
+TEST(INIEditor, editValue) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string section = "Display";
+  std::string key = "fShadowLODMaxStartFade";
+  std::string newValue = "2000.0";
+
+  editor.editValue(section, key, newValue);
+
+  EXPECT_EQ(editor.getValueBySectionAndKey(section, key), newValue);
+  // Test invalid key
+  EXPECT_FALSE(editor.editValue(section, Testing::invalidName, newValue));
+  // Test invalid section
+  EXPECT_FALSE(editor.editValue(Testing::invalidName, key, newValue));
+}
+
+ 
+TEST(INIEditor, deleteKey) {
+  editor.setWorkingFile(Testing::defaultFile);
+  editor.parseWorkingFile();
+
+  std::string section = "Display";
+  std::string key = "fShadowLODMaxStartFade";
+
+  auto keysNum = editor.getSection(section).size();
+  editor.deleteKey(section, key);
+  auto newKeysNum = editor.getSection(section).size();
+
+  EXPECT_NE(newKeysNum, keysNum);
+  EXPECT_EQ(keysNum - 1, newKeysNum);
+  // Test invalid section
+  EXPECT_FALSE(editor.deleteKey(Testing::invalidName, key));
+  // Test invalid key
+  EXPECT_FALSE(editor.deleteKey(section, Testing::invalidName));
+}
+
 

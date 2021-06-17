@@ -15,7 +15,7 @@
 
 class UI {
 public:
-  UI(INIEditor&);
+  explicit UI(INIEditor&);
 
 private:
   INIEditor& editor;

@@ -1,7 +1,7 @@
 #include "INIEditor.h"
 
 
-std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::string& filename) const {  
+std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::string& filename) const {
   std::vector<std::string> lines;
   std::fstream fileToParse;
   std::string tempLine;
@@ -23,7 +23,25 @@ std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::stri
       line.erase(0, 1);
     }
   }
-  return lines; // move semantics implemented by the compiler?
+  return lines;
+}
+
+std::vector<std::string> INIEditor::parseMapToStringVector(const mapKeyValues& map) const {
+  std::vector<std::string> lines;
+  std::string tempLine;
+
+  for(auto& section : map) {
+    tempLine = section.first;
+    lines.push_back(tempLine);
+    for(auto& pair : section.second) {
+      tempLine = pair.first + '=' + pair.second;
+      lines.push_back(tempLine);
+    }
+    tempLine = "";
+    lines.push_back(tempLine);
+  }
+
+  return lines;  
 }
 
 INIEditor::~INIEditor() {
@@ -70,7 +88,7 @@ std::string INIEditor::getCurrentFilename() const {
 }
 
 std::pair<std::string, std::string> INIEditor::getKeyValuePair(unsigned int index) const {
-  std::pair<std::string, std::string> keyValue = this->getKeyValuePair(this->lines[index]);
+  std::pair<std::string, std::string> keyValue = this->parseStringToKeyValuePair(this->lines[index]);
   return keyValue;
 }
 
@@ -83,7 +101,7 @@ void INIEditor::insertLine(unsigned int index, std::string& newLine) {
   this->parseMapFromLines();
 }
 
-std::pair<std::string, std::string> INIEditor::getKeyValuePair(const std::string& line) const {
+std::pair<std::string, std::string> INIEditor::parseStringToKeyValuePair(const std::string& line) const {
   char delimiter = '=';
   std::pair<std::string, std::string> keyValue;
   std::istringstream sstream(line);
@@ -92,7 +110,7 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(const std::string
   return keyValue;
 }
 
-mapKeyValues INIEditor::getSectionsKeyValuePairsMap(std::vector<std::string> lines) const {
+mapKeyValues INIEditor::parseStringVectorToMap(std::vector<std::string> lines) const {
 
   // Reminder: using mapKeyValues = std::map<std::string, std::map<std::string, std::string>>;
   mapKeyValues sectionsKeyValuesMap;
@@ -140,8 +158,11 @@ void INIEditor::parseWorkingFile() {
 }
 
 void INIEditor::parseMapFromLines() {
-  // delete this->sectionsKeyValues; // TODO commented while testing smart pointers
-  this->sectionsKeyValues = this->getSectionsKeyValuePairsMap(this->lines);
+  this->sectionsKeyValues = this->parseStringVectorToMap(this->lines);
+}
+
+void INIEditor::parseLinesFromMap() {
+  this->lines = this->parseMapToStringVector(this->sectionsKeyValues);
 }
 
 void INIEditor::replaceEntireLine(int index, std::string& value) {
@@ -158,6 +179,96 @@ void INIEditor::writeLinesToFile() {
   auto fileName = this->getCurrentFilename();
   this->saveCurrentLines(fileName);
 }
+
+std::string INIEditor::getValueBySectionAndKey(std::string& section, std::string& key) const {
+  return this->sectionsKeyValues.at(section).at(key);
+}
+
+std::map<std::string, std::string> INIEditor::getSection(std::string& sectionName) const {
+  std::map<std::string, std::string> section;
+  auto it = this->sectionsKeyValues.find(sectionName);
+  if(it != this->sectionsKeyValues.end()) {
+    section = it->second;
+  }
+  return section;
+}
+
+bool INIEditor::renameSection(std::string& sectionToRename, std::string& newName) {
+  auto it = this->sectionsKeyValues.find(sectionToRename);
+  if(it != this->sectionsKeyValues.end()) {
+    auto sectionValuesTemp = this->getSection(sectionToRename);
+    this->deleteSection(sectionToRename);
+    this->addSection(newName);
+    this->sectionsKeyValues.at(newName) = sectionValuesTemp;
+    this->parseLinesFromMap();
+    return true;
+  }
+  return false;
+}
+
+bool INIEditor::deleteSection(std::string& sectionName) {
+  auto it = this->sectionsKeyValues.find(sectionName);
+  if(it != this->sectionsKeyValues.end()) {
+    this->sectionsKeyValues.erase(sectionName);
+    return true;
+    this->parseLinesFromMap();
+  }
+  return false;
+}
+
+bool INIEditor::addSection(std::string& newName) {
+  std::pair<std::string, std::map<std::string, std::string>> newSection;
+  newSection.first = newName;
+  if(this->sectionsKeyValues.emplace(newSection).second) { // map.emplace() returns a pair of <iterator to new/old value, true/false>
+    this->parseLinesFromMap();
+    return true;
+  };
+  return false;
+}
+
+bool INIEditor::addPairToSection(std::string& section, std::string& key, std::string& value) {
+  if(this->sectionsKeyValues.at(section).emplace(key, value).second) {
+    this->parseLinesFromMap();
+    return true;
+  }
+  return false;
+}
+
+bool INIEditor::editValue(std::string& section, std::string& key, std::string& value) {
+  auto sectionIt = this->sectionsKeyValues.find(section);
+  if(sectionIt != this->sectionsKeyValues.end()) {
+    auto keyIt = this->sectionsKeyValues.at(section).find(key);
+    if(keyIt != this->sectionsKeyValues.at(section).end()){
+      this->sectionsKeyValues.at(section).at(key) = value;
+      this->parseLinesFromMap();
+      return true;
+    }
+  }
+  return false;
+}
+
+bool INIEditor::deleteKey(std::string& section, std::string& key) {
+  auto sectionIt = this->sectionsKeyValues.find(section);
+  if(sectionIt != this->sectionsKeyValues.end()) {
+    auto keyIt = this->sectionsKeyValues.at(section).find(key);
+    if(keyIt != this->sectionsKeyValues.at(section).end()){
+      this->sectionsKeyValues.at(section).erase(key);
+      this->parseLinesFromMap();
+      return true;
+    }
+  }
+  return false;
+}
+
+// std::string INIEditor::getValueByKey(std::string& key) const {
+//   // Searches entire map for key, regardless of section (assumes every key is unique)
+//   std::string value = this->sectionsKeyValues.find(key);
+
+
+// TODO finish
+
+//   return value;
+// }
 
 void INIEditor::setExpectedExit() {
   this->isUnexpectedExit = false;
