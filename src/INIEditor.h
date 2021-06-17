@@ -29,8 +29,8 @@ public:
   unsigned int getNumberOfLines() const;
   void listSections() const;  // TODO this doesn't really belong here, move to UI class?
   std::string getCurrentFilename() const;
-  std::pair<std::string, std::string> getKeyValuePair(unsigned int) const; // Overloaded in private utilities
-  mapKeyValues getKeyValuesMap() const; // TODO currently disabled because removing ptrs. Delete?
+  std::pair<std::string, std::string> getKeyValuePair(unsigned int) const;
+  mapKeyValues getKeyValuesMap() const;
 
   // Public APIs WITH side effects
   void insertLine(unsigned int, std::string&); // Insert line at specified index
@@ -44,6 +44,29 @@ public:
   void writeLinesToFile();
 
 
+  // Map manipulation public API
+  std::string getValueBySectionAndKey(std::string&, std::string&) const; // throws by STL map.at()
+  std::map<std::string, std::string> getSection(std::string&) const; // throws by STL map.at()
+  bool renameSection(std::string&, std::string&);
+  bool deleteSection(std::string&);
+  bool addSection(std::string&);
+  bool addPairToSection(std::string&, std::string&, std::string&); // bool and also throws by STL map.at()
+  bool editValue(std::string&, std::string&, std::string&);
+  bool deleteKey(std::string&, std::string&);
+
+  // Done:
+  // Delete key in section
+  // New utility: parseLinesFromMap();
+  // Get section as map
+  // Get pair by line number
+  // Delete entire section (pairs included)
+  // Add section
+  // Add pair to section
+  // Get value by section and key name
+  // Rename section
+  // Edit value by section and key name
+
+
 private:
   // Internal attributes
   std::vector<std::string> lines;
@@ -53,15 +76,15 @@ private:
 
   // Internal helper functions WITH side effects
   void parseMapFromLines();
+  void parseLinesFromMap();
   void replaceLine(int, std::string&);
   void saveCurrentLines(std::string&);
 
   // Internal helper functions WITHOUT side effects
   std::vector<std::string> parseFileLinesToStringVector(const std::string&) const;
-  std::pair<std::string, std::string> getKeyValuePair(const std::string&) const; // Overloaded in public APIs
-
-  mapKeyValues getSectionsKeyValuePairsMap(std::vector<std::string>) const;
-
+  std::vector<std::string> parseMapToStringVector(const mapKeyValues&) const;
+  std::pair<std::string, std::string> parseStringToKeyValuePair(const std::string&) const;
+  mapKeyValues parseStringVectorToMap(std::vector<std::string>) const;
 };
 
 
