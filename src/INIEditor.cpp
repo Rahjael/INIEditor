@@ -74,9 +74,9 @@ std::pair<std::string, std::string> INIEditor::getKeyValuePair(unsigned int inde
   return keyValue;
 }
 
-// const mapKeyValues * INIEditor::getPtrToKeyValuesMap() const {
-//   return this->sectionsKeyValues;
-// }
+mapKeyValues INIEditor::getKeyValuesMap() const {
+  return this->sectionsKeyValues;
+}
 
 void INIEditor::insertLine(unsigned int index, std::string& newLine) {
   this->lines.insert(this->lines.begin() + index, newLine);

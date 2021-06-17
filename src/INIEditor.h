@@ -30,7 +30,7 @@ public:
   void listSections() const;  // TODO this doesn't really belong here, move to UI class?
   std::string getCurrentFilename() const;
   std::pair<std::string, std::string> getKeyValuePair(unsigned int) const; // Overloaded in private utilities
-  // const mapKeyValues getPtrToKeyValuesMap() const; // TODO currently disabled because removing ptrs. Delete?
+  mapKeyValues getKeyValuesMap() const; // TODO currently disabled because removing ptrs. Delete?
 
   // Public APIs WITH side effects
   void insertLine(unsigned int, std::string&); // Insert line at specified index
@@ -47,7 +47,7 @@ public:
 private:
   // Internal attributes
   std::vector<std::string> lines;
-  mapKeyValues sectionsKeyValues; // Yes, destructor cleans this up // TODO old raw pointer to delete
+  mapKeyValues sectionsKeyValues;
   std::string workingFile;
   bool isUnexpectedExit;
 
