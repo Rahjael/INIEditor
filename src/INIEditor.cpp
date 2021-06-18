@@ -45,8 +45,6 @@ std::vector<std::string> INIEditor::parseMapToStringVector(const mapKeyValues& m
 }
 
 INIEditor::~INIEditor() {
-  //delete this->sectionsKeyValues; // TODO commented out while testing smart pointers
-
   if(this->isUnexpectedExit && this->workingFile != "") {
     std::cout << "Autosaving because of unexpected exit..." << std::endl;
     std::string filename = "autosave.ini";
@@ -55,12 +53,6 @@ INIEditor::~INIEditor() {
 }
 
 std::vector<std::string> INIEditor::getLines() const {
-  // unsigned short index = 0;
-  // for(auto& it : this->lines) {
-  //   std::cout << index << ". \t" << it << std::endl;
-  //   index++;
-  // }
-
   return this->lines;
 }
 
@@ -80,6 +72,7 @@ void INIEditor::listSections() const {
 }
 
 void INIEditor::setWorkingFile(std::string& filename) {
+  if(filename == "") throw std::invalid_argument("Filename must not be empty");
   this->workingFile = filename;
 }
 
@@ -88,6 +81,7 @@ std::string INIEditor::getCurrentFilename() const {
 }
 
 std::pair<std::string, std::string> INIEditor::getKeyValuePair(unsigned int index) const {
+  if(index < 0 || index >= this->lines.size()) throw std::out_of_range("Invalid index");
   std::pair<std::string, std::string> keyValue = this->parseStringToKeyValuePair(this->lines[index]);
   return keyValue;
 }
@@ -97,12 +91,21 @@ mapKeyValues INIEditor::getKeyValuesMap() const {
 }
 
 void INIEditor::insertLine(unsigned int index, std::string& newLine) {
+  if(index < 0 || index >= this->lines.size()) throw std::out_of_range("Invalid index");
   this->lines.insert(this->lines.begin() + index, newLine);
   this->parseMapFromLines();
 }
 
-std::pair<std::string, std::string> INIEditor::parseStringToKeyValuePair(const std::string& line) const {
+std::pair<std::string, std::string> INIEditor::parseStringToKeyValuePair(const std::string& line) const {  
   char delimiter = '=';
+  unsigned int num = 0;
+  for(auto& c : line) {
+    if(c == delimiter) {
+      num++;
+    }
+  }
+  if(num != 1) throw std::invalid_argument("Cannot parse string, invalid number of delimiters: " + std::to_string(num) + ". Expected 1");
+
   std::pair<std::string, std::string> keyValue;
   std::istringstream sstream(line);
   std::getline(sstream, keyValue.first, delimiter);
@@ -111,7 +114,6 @@ std::pair<std::string, std::string> INIEditor::parseStringToKeyValuePair(const s
 }
 
 mapKeyValues INIEditor::parseStringVectorToMap(std::vector<std::string> lines) const {
-
   // Reminder: using mapKeyValues = std::map<std::string, std::map<std::string, std::string>>;
   mapKeyValues sectionsKeyValuesMap;
   // Char and string literals
@@ -166,11 +168,13 @@ void INIEditor::parseLinesFromMap() {
 }
 
 void INIEditor::replaceEntireLine(int index, std::string& value) {
+  if(index < 0 || index >= this->lines.size()) throw std::out_of_range("Invalid index");
   this->lines[index] = value;
   this->parseMapFromLines();
 }
 
 void INIEditor::replaceLineByKeyValuePair(int index, std::pair<std::string, std::string> keyValue) {
+  if(index < 0 || index >= this->lines.size()) throw std::out_of_range("Invalid index");
   auto newString = std::string(keyValue.first + "=" + keyValue.second);
   this->replaceEntireLine(index, newString);
 }
@@ -260,16 +264,6 @@ bool INIEditor::deleteKey(std::string& section, std::string& key) {
   return false;
 }
 
-// std::string INIEditor::getValueByKey(std::string& key) const {
-//   // Searches entire map for key, regardless of section (assumes every key is unique)
-//   std::string value = this->sectionsKeyValues.find(key);
-
-
-// TODO finish
-
-//   return value;
-// }
-
 void INIEditor::setExpectedExit() {
   this->isUnexpectedExit = false;
 }
@@ -281,6 +275,7 @@ void INIEditor::clearAll() {
 }
 
 void INIEditor::deleteLine(unsigned int index) {
+  if(index < 0 || index >= this->lines.size()) throw std::out_of_range("Invalid index");
   this->lines.erase(this->lines.begin()+index);
   this->parseMapFromLines();
 }

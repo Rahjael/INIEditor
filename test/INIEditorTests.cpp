@@ -75,6 +75,9 @@ TEST(INIEditor, setWorkingFile) {
   editor.setExpectedExit();
   editor.setWorkingFile(Testing::defaultFile);
   EXPECT_EQ(editor.getCurrentFilename(), Testing::defaultFile);
+
+  std::string empty = "";
+  EXPECT_THROW(editor.setWorkingFile(empty), std::invalid_argument);
 }
 
 TEST(INIEditor, clearAll) {
@@ -102,6 +105,9 @@ TEST(INIEditor, getKeyValuePair) {
 
   EXPECT_EQ(key, "SGeneralMasterMismatchWarning");
   EXPECT_EQ(value, "One or more plugins could not find the correct versions of the master files they depend on. Errors may occur during load or game play. Check the \"Warnings.txt\" file for more information.");
+
+  EXPECT_THROW(editor.getKeyValuePair(-1), std::out_of_range);
+  EXPECT_THROW(editor.getKeyValuePair(234234), std::out_of_range);
 }
 
 TEST(INIEditor, getPtrToSectionsKeyValues) {
@@ -120,6 +126,9 @@ TEST(INIEditor, replaceEntireLine) {
   editor.replaceEntireLine(12, newLine);
 
   EXPECT_EQ(keyValuesMap[section][key], value);
+
+  EXPECT_THROW(editor.replaceEntireLine(-1, newLine), std::out_of_range);
+  EXPECT_THROW(editor.replaceEntireLine(456456, newLine), std::out_of_range);
 }
 
 // This feels a bit unnecessary, but you never know
@@ -132,6 +141,9 @@ TEST(INIEditor, deleteLine) {
 
   EXPECT_FALSE(prevNumLines == editor.getNumberOfLines());
   EXPECT_FALSE(lineToDelete == editor.getLines()[indexToDelete]);
+
+  EXPECT_THROW(editor.deleteLine(-1), std::out_of_range);
+  EXPECT_THROW(editor.deleteLine(234234), std::out_of_range);
 }
 
 TEST(INIEditor, insertLine) {
@@ -145,6 +157,10 @@ TEST(INIEditor, insertLine) {
   EXPECT_EQ(prevNumLines + 1, editor.getNumberOfLines());
   EXPECT_EQ(shiftedLine, editor.getLines()[addAtIndex + 1]);
   EXPECT_EQ(editor.getLines()[addAtIndex], lineToAdd);
+
+  EXPECT_THROW(editor.insertLine(-1, lineToAdd), std::out_of_range);
+  EXPECT_THROW(editor.insertLine(234234, lineToAdd), std::out_of_range);
+
 }
 
 TEST(INIEditor, writeFile) {
