@@ -1,6 +1,7 @@
 #ifndef __INIEDITOR_H__
 #define __INIEDITOR_H__
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -51,7 +52,7 @@ public:
   bool renameSection(std::string&, std::string&);
   bool deleteSection(std::string&);
   bool addSection(std::string&);
-  bool addPairToSection(std::string&, std::string&, std::string&); // bool and also throws by STL map.at()
+  bool addKeyValueToSection(std::string&, std::string&, std::string&); // bool and also throws by STL map.at()
   bool editValue(std::string&, std::string&, std::string&);
   bool deleteKey(std::string&, std::string&);
 

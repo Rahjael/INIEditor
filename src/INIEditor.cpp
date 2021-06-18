@@ -6,9 +6,16 @@ std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::stri
   std::fstream fileToParse;
   std::string tempLine;
 
+  if(filename.size() <= 0)
+    throw std::invalid_argument("Filename is empty.");
+
+  if(!std::filesystem::exists(filename))
+    throw std::runtime_error("Provided filename does not exists in current directory. Filename: " + filename);
+
   fileToParse.open(filename);
   if(!fileToParse) {
     std::cerr << "Could not open " << filename << ". Make sure it exists or it is not already in use." << std::endl;
+    throw std::runtime_error("Could not open file to parse.");
     exit(1);
   }
   while(getline(fileToParse, tempLine)) {
@@ -41,7 +48,7 @@ std::vector<std::string> INIEditor::parseMapToStringVector(const mapKeyValues& m
     lines.push_back(tempLine);
   }
 
-  return lines;  
+  return lines;
 }
 
 INIEditor::~INIEditor() {
@@ -98,6 +105,8 @@ void INIEditor::insertLine(unsigned int index, std::string& newLine) {
 
 std::pair<std::string, std::string> INIEditor::parseStringToKeyValuePair(const std::string& line) const {  
   char delimiter = '=';
+  
+  // Verify if delimiter is present and unique
   unsigned int num = 0;
   for(auto& c : line) {
     if(c == delimiter) {
@@ -130,7 +139,6 @@ mapKeyValues INIEditor::parseStringVectorToMap(std::vector<std::string> lines) c
 
     // Detect section
     if(lines[i][0] == beginSectionChar) {
-      // In Javascript, this would be a single line. But this is C++ (and also I'm bad) so:
       std::string tempLine = lines[i]; // Copy string to avoid messing up
       tempLine.erase(0, 1); // Erase first char (presumably '[')
       std::istringstream tempStream(tempLine); // Cast string into stringstream to allow use of std::getline()
@@ -230,7 +238,7 @@ bool INIEditor::addSection(std::string& newName) {
   return false;
 }
 
-bool INIEditor::addPairToSection(std::string& section, std::string& key, std::string& value) {
+bool INIEditor::addKeyValueToSection(std::string& section, std::string& key, std::string& value) {
   if(this->sectionsKeyValues.at(section).emplace(key, value).second) {
     this->parseLinesFromMap();
     return true;
@@ -281,6 +289,9 @@ void INIEditor::deleteLine(unsigned int index) {
 }
 
 void INIEditor::saveCurrentLines(std::string& filename) {
+  if(this->lines.size() < 1)
+    throw std::runtime_error("Nothing to save");
+
   std::ofstream file;
   file.open(filename);
   for(auto& line : this->lines) {
