@@ -43,7 +43,7 @@ TEST(INIEditor, file_parsing) {
   editor.setExpectedExit();
 
   editor.setWorkingFile(Testing::invalidName);
-  EXPECT_THROW(editor.parseWorkingFile(), std::runtime_error);
+  EXPECT_THROW(editor.parseWorkingFile(), std::invalid_argument);
   EXPECT_THROW(editor.setWorkingFile(Testing::emptyName), std::invalid_argument);
 }
 
@@ -91,7 +91,7 @@ TEST(INIEditor, clearAll) {
 TEST(INIEditor, clearAll_further_tests_for_weirdness) {
   INIEditor innerEditor;
   // XXX clearAll() used to give a segfault if called before anything was parsed.
-  // I still don't understand why, but will leave these here just for safety
+  // It doesn't happen anymore and I didn't figure out why, but will leave these here just for safety
   EXPECT_NO_THROW(innerEditor.clearAll());
   EXPECT_EQ(innerEditor.getCurrentFilename(), "");
   EXPECT_THROW(innerEditor.parseWorkingFile(), std::invalid_argument);
@@ -138,7 +138,6 @@ TEST(INIEditor, replaceEntireLine) {
   EXPECT_THROW(editor.replaceEntireLine(456456, newLine), std::out_of_range);
 }
 
-// This feels a bit unnecessary, but you never know
 TEST(INIEditor, deleteLine) {
   auto prevNumLines = editor.getNumberOfLines();
   auto indexToDelete = 15;
@@ -330,27 +329,16 @@ TEST(INIEditor, deleteKey) {
 
 
 
-TEST(INIEditor, weird_stuff_one_may_try) {
+TEST(INIEditor, weird_stuff_before_parsing) {
   INIEditor weirdEditor;
 
   EXPECT_EQ(weirdEditor.getCurrentFilename(), "");
   EXPECT_EQ(weirdEditor.getNumberOfLines(), 0);
   EXPECT_EQ(weirdEditor.getLines().size(), 0);
-
   EXPECT_NO_THROW(weirdEditor.clearAll());
   EXPECT_NO_THROW(weirdEditor.getNumberOfLines());
   EXPECT_NO_THROW(weirdEditor.getLines());
-
   EXPECT_THROW(weirdEditor.writeLinesToFile(), std::runtime_error);
-
-
-
-
-
-
-
-
-
 }
 
 

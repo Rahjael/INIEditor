@@ -15,9 +15,6 @@
 
 // This is just for readability
 using mapKeyValues = std::map<std::string, std::map<std::string, std::string>>;
-// I'm still not really sure if this map thing can be helpful at all. I thought it'd make it easier
-// to edit the values, but I can probably do fine with just an array of lines and some string manipulation.
-// Anyway I decided to leave it there, it can be useful for future implementations.
 
 
 class INIEditor {
@@ -29,7 +26,6 @@ public:
   // Public APIs WITHOUT side effects
   std::vector<std::string> getLines() const;
   unsigned int getNumberOfLines() const;
-  void listSections() const;  // TODO this doesn't really belong here, move to UI class?
   std::string getCurrentFilename() const;
   std::pair<std::string, std::string> getKeyValuePair(unsigned int) const;
   mapKeyValues getKeyValuesMap() const;
@@ -44,7 +40,6 @@ public:
   void setExpectedExit();
   void setWorkingFile(std::string&);
   void writeLinesToFile();
-
 
   // Map manipulation public API
   std::string getValueBySectionAndKey(std::string&, std::string&) const; // throws by STL map.at()
@@ -87,6 +82,12 @@ private:
   std::vector<std::string> parseMapToStringVector(const mapKeyValues&) const;
   std::pair<std::string, std::string> parseStringToKeyValuePair(const std::string&) const;
   mapKeyValues parseStringVectorToMap(std::vector<std::string>) const;
+
+
+
+
+
+  // void listSections() const;  // TODO this doesn't really belong here, move to UI class? (was public)
 };
 
 

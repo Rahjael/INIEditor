@@ -10,7 +10,7 @@ std::vector<std::string> INIEditor::parseFileLinesToStringVector(const std::stri
     throw std::invalid_argument("Filename is empty.");
 
   if(!std::filesystem::exists(filename))
-    throw std::runtime_error("Provided filename does not exists in current directory. Filename: " + filename);
+    throw std::invalid_argument("Provided filename does not exist in current directory. Filename: " + filename);
 
   fileToParse.open(filename);
   if(!fileToParse) {
@@ -67,16 +67,6 @@ unsigned int INIEditor::getNumberOfLines() const {
   return this->lines.size();
 }
 
-void INIEditor::listSections() const {
-  std::cout << "\nPrinting mapped sections and key/value pairs:" << std::endl;
-  for(auto& it : this->sectionsKeyValues) {
-    std::cout << "Section: " << it.first << std::endl;
-    for(auto& jt : it.second) {
-      std::cout << "\t" << jt.first << " = " << jt.second << std::endl;
-    }
-  }
-  std::cout << "End." << std::endl;
-}
 
 void INIEditor::setWorkingFile(std::string& filename) {
   if(filename == "") throw std::invalid_argument("Filename must not be empty");
@@ -193,7 +183,7 @@ void INIEditor::writeLinesToFile() {
 }
 
 std::string INIEditor::getValueBySectionAndKey(std::string& section, std::string& key) const {
-  return this->sectionsKeyValues.at(section).at(key);
+  return this->sectionsKeyValues.at(section).at(key); // .at() throws by STL
 }
 
 std::map<std::string, std::string> INIEditor::getSection(std::string& sectionName) const {
@@ -222,8 +212,8 @@ bool INIEditor::deleteSection(std::string& sectionName) {
   auto it = this->sectionsKeyValues.find(sectionName);
   if(it != this->sectionsKeyValues.end()) {
     this->sectionsKeyValues.erase(sectionName);
-    return true;
     this->parseLinesFromMap();
+    return true;
   }
   return false;
 }
@@ -304,3 +294,15 @@ void INIEditor::replaceLine(int index, std::string& newString) {
   this->lines[index] = newString;
 }
 
+
+
+// void INIEditor::listSections() const {
+//   std::cout << "\nPrinting mapped sections and key/value pairs:" << std::endl;
+//   for(auto& it : this->sectionsKeyValues) {
+//     std::cout << "Section: " << it.first << std::endl;
+//     for(auto& jt : it.second) {
+//       std::cout << "\t" << jt.first << " = " << jt.second << std::endl;
+//     }
+//   }
+//   std::cout << "End." << std::endl;
+// }
