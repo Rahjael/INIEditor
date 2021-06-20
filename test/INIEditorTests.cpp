@@ -117,7 +117,7 @@ TEST(INIEditor, getKeyValuePair) {
   EXPECT_THROW(editor.getKeyValuePair(234234), std::out_of_range);
 }
 
-TEST(INIEditor, getPtrToSectionsKeyValues) {
+TEST(INIEditor, getKeyValuesMap) {
   auto keyValuesMap = editor.getKeyValuesMap();
   std::string sectionName = "Audio";
   
